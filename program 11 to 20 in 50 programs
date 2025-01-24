@@ -1,0 +1,274 @@
+11> SINGLETON DESIGN PATTERN
+using System;
+class Singleton
+{
+    private static Singleton instance;
+    private Singleton() { }
+    public static Singleton GetInstance()
+    {
+        if (instance == null)
+        {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+    public void DisplayMessage()
+    {
+        Console.WriteLine("Singleton Instance");
+    }
+    static void Main()
+    {
+        Singleton obj1 = Singleton.GetInstance();
+        Singleton obj2 = Singleton.GetInstance();
+        obj1.DisplayMessage();
+        Console.WriteLine($"Are both instances same? {obj1 == obj2}");
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+12> COUNT WORDS IN A STRING
+using System;
+class WordCount
+{
+    static void Main()
+    {
+        Console.WriteLine("Enter a string:");
+        string input = Console.ReadLine();
+        int wordCount = input.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        Console.WriteLine($"The string contains {wordCount} word(s).");
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+13> MATRIX ADDITION
+using System;
+class MatrixAddition
+{
+    static void Main()
+    {
+        int[,] matrix1 = { { 1, 2 }, { 3, 4 } };
+        int[,] matrix2 = { { 5, 6 }, { 7, 8 } };
+        int rows = matrix1.GetLength(0);
+        int cols = matrix1.GetLength(1);
+        int[,] result = new int[rows, cols];
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                result[i, j] = matrix1[i, j] + matrix2[i, j];
+            }
+        }
+        Console.WriteLine("Resultant Matrix:");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write(result[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+14> LINQ QUERY ON A LIST
+using System;
+using System.Collections.Generic;
+using System.Linq;
+class LINQExample
+{
+    static void Main()
+    {
+        List<int> numbers = new List<int> { 5, 1, 8, 2, 3, 7, 6, 4 };
+        var evenNumbers = numbers.Where(n => n % 2 == 0).OrderBy(n => n);
+
+        Console.WriteLine("Even Numbers:");
+        foreach (var num in evenNumbers)
+        {
+            Console.WriteLine(num);
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+15> WEATHER FETCHER APP
+using System;
+using System.Net.Http;
+using System.Windows.Forms;
+class WeatherApp : Form
+{
+    TextBox cityTextBox;
+    Label resultLabel;
+    public WeatherApp()
+    {
+        cityTextBox = new TextBox { Dock = DockStyle.Top, PlaceholderText = "Enter city name" };
+        Button fetchButton = new Button { Text = "Fetch Weather", Dock = DockStyle.Top };
+        resultLabel = new Label { Dock = DockStyle.Fill, TextAlign = System.Drawing.ContentAlignment.MiddleCenter };
+        fetchButton.Click += FetchWeather;
+        Controls.Add(resultLabel);
+        Controls.Add(fetchButton);
+        Controls.Add(cityTextBox);
+    }
+    private async void FetchWeather(object sender, EventArgs e)
+    {
+        string city = cityTextBox.Text.Trim();
+        if (string.IsNullOrEmpty(city))
+        {
+            resultLabel.Text = "Please enter a city name.";
+            return;
+        }
+        string apiKey = "YOUR_API_KEY";
+        string apiUrl = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}";
+        using HttpClient client = new HttpClient();
+        try
+        {
+            string response = await client.GetStringAsync(apiUrl);
+            resultLabel.Text = response;
+        }
+        catch (Exception ex)
+        {
+            resultLabel.Text = $"Error: {ex.Message}";
+        }
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.Run(new WeatherApp());
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+16> OBSERVER DESIGN PATTERN
+using System;
+using System.Collections.Generic;
+interface IObserver
+{
+    void Update(string message);
+}
+class Subject
+{
+    private List<IObserver> observers = new List<IObserver>();
+    public void Attach(IObserver observer) => observers.Add(observer);
+    public void Detach(IObserver observer) => observers.Remove(observer);
+    public void Notify(string message)
+    {
+        foreach (var observer in observers)
+        {
+            observer.Update(message);
+        }
+    }
+}
+
+class Observer : IObserver
+{
+    private string name;
+    public Observer(string name) => this.name = name;
+    public void Update(string message)
+    {
+        Console.WriteLine($"{name} received: {message}");
+    }
+}
+class Program
+{
+    static void Main()
+    {
+        Subject subject = new Subject();
+        Observer observer1 = new Observer("Observer 1");
+        Observer observer2 = new Observer("Observer 2");
+        subject.Attach(observer1);
+        subject.Attach(observer2);
+        subject.Notify("Event 1 occurred.");
+        subject.Detach(observer1);
+        subject.Notify("Event 2 occurred.");
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+17> CALCULATE SUM OF EVEN NUMBERS IN A RANGE
+using System;
+class SumEvenNumbers
+{
+    static void Main()
+    {
+        Console.Write("Enter start of range: ");
+        int start = int.Parse(Console.ReadLine());
+        Console.Write("Enter end of range: ");
+        int end = int.Parse(Console.ReadLine());
+        int sum = 0;
+        for (int i = start; i <= end; i++)
+        {
+            if (i % 2 == 0)
+                sum += i;
+        }
+        Console.WriteLine($"Sum of even numbers between {start} and {end} is {sum}.");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+18> REVERSE WORDS IN A SENTENCE
+using System;
+class ReverseWords
+{
+    static void Main()
+    {
+        Console.WriteLine("Enter a sentence:");
+        string sentence = Console.ReadLine();
+        string reversed = string.Join(" ", sentence.Split(' ').Reverse());
+        Console.WriteLine($"Reversed sentence: {reversed}");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+19> COUNT NUMBER OF LINES IN A FILE
+using System;
+using System.IO;
+class LineCounter
+{
+    static void Main()
+    {
+        Console.Write("Enter file path: ");
+        string filePath = Console.ReadLine();
+        if (File.Exists(filePath))
+        {
+            int lineCount = File.ReadAllLines(filePath).Length;
+            Console.WriteLine($"The file contains {lineCount} lines.");
+        }
+        else
+        {
+            Console.WriteLine("File not found.");
+        }
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+20> PROGRESS BAR EXAMPLE
+using System;
+using System.Windows.Forms;
+class ProgressBarExample : Form
+{
+    ProgressBar progressBar;
+    Button startButton;
+    public ProgressBarExample()
+    {
+        progressBar = new ProgressBar
+        {
+            Dock = DockStyle.Top,
+            Minimum = 0,
+            Maximum = 100,
+            Value = 0
+        };
+        startButton = new Button
+        {
+            Text = "Start",
+            Dock = DockStyle.Top
+        };
+        startButton.Click += StartProgress;
+        Controls.Add(progressBar);
+        Controls.Add(startButton);
+    }
+    private async void StartProgress(object sender, EventArgs e)
+    {
+        for (int i = 0; i <= 100; i++)
+        {
+            progressBar.Value = i;
+            await Task.Delay(50);
+        }
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.Run(new ProgressBarExample());
+    }
+}
