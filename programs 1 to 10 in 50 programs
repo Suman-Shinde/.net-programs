@@ -1,0 +1,255 @@
+1>HELLO WORLD
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2>PALINDROM SYSTEM
+using System;
+class Palindrome
+{
+    static void Main()
+    {
+        Console.WriteLine("Enter a string:");
+        string input = Console.ReadLine();
+        string reversed = new string(input.Reverse().ToArray());
+        if (input == reversed)
+            Console.WriteLine("The string is a palindrome.");
+        else
+            Console.WriteLine("The string is not a palindrome.");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3>FILE WRITE AND READ
+using System;
+using System.IO;
+class FileExample
+{
+    static void Main()
+    {
+        string filePath = "example.txt";
+        File.WriteAllText(filePath, "Hello, this is a test file!");
+        string content = File.ReadAllText(filePath);
+        Console.WriteLine($"File Content: {content}");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4>STACK IMPLEMENTATION
+using System;
+using System.Collections.Generic;
+class StackExample
+{
+    static void Main()
+    {
+        Stack<int> stack = new Stack<int>();
+        stack.Push(10);
+        stack.Push(20);
+        stack.Push(30);
+        Console.WriteLine("Stack elements:");
+        foreach (int item in stack)
+            Console.WriteLine(item);
+        Console.WriteLine($"Popped element: {stack.Pop()}");
+        Console.WriteLine($"Top element: {stack.Peek()}");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5>DIGITAL CLOCK
+using System;
+using System.Windows.Forms;
+class DigitalClock : Form
+{
+    Timer timer;
+    Label timeLabel;
+    public DigitalClock()
+    {
+        timeLabel = new Label
+        {
+            Font = new System.Drawing.Font("Arial", 24),
+            Dock = DockStyle.Fill,
+            TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        };
+        timer = new Timer { Interval = 1000 };
+        timer.Tick += UpdateTime;
+        timer.Start();
+        Controls.Add(timeLabel);
+        UpdateTime(null, null);
+    }
+    private void UpdateTime(object sender, EventArgs e)
+    {
+        timeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.Run(new DigitalClock());
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6>DATABASE INSERT
+using System;
+using System.Data.SqlClient;
+class DatabaseInsert
+{
+    static void Main()
+    {
+        string connectionString = "Server=YOUR_SERVER;Database=YOUR_DATABASE;User Id=YOUR_USERNAME;Password=YOUR_PASSWORD;";
+        string query = "INSERT INTO Employees (Name, Age, Department) VALUES ('John Doe', 30, 'HR')";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            SqlCommand command = new SqlCommand(query, connection);
+            connection.Open();
+            int rowsAffected = command.ExecuteNonQuery();
+            Console.WriteLine($"{rowsAffected} row(s) inserted.");
+        }
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7>PRINT MULTIPLICATION TABLE
+using System;
+class MultiplicationTable
+{
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int num = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine($"Multiplication Table for {num}:");
+        for (int i = 1; i <= 10; i++)
+        {
+            Console.WriteLine($"{num} x {i} = {num * i}");
+        }
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8>CHECK IF FILE EXISTS
+using System;
+using System.IO;
+class CheckFile
+{
+    static void Main()
+    {
+        Console.Write("Enter file path: ");
+        string filePath = Console.ReadLine();
+        if (File.Exists(filePath))
+            Console.WriteLine("The file exists.");
+        else
+            Console.WriteLine("The file does not exist.");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9>CIRCULAR QUEUE IMPLEMENTATION
+using System;
+class CircularQueue
+{
+    private int[] queue;
+    private int front, rear, size;
+    public CircularQueue(int capacity)
+    {
+        queue = new int[capacity];
+        front = rear = -1;
+        size = capacity;
+    }
+    public void Enqueue(int data)
+    {
+        if ((rear + 1) % size == front)
+        {
+            Console.WriteLine("Queue is Full");
+            return;
+        }
+        if (front == -1) front = 0;
+        rear = (rear + 1) % size;
+        queue[rear] = data;
+    }
+    public void Dequeue()
+    {
+        if (front == -1)
+        {
+            Console.WriteLine("Queue is Empty");
+            return;
+        }
+        Console.WriteLine($"Dequeued: {queue[front]}");
+        if (front == rear)
+            front = rear = -1;
+        else
+            front = (front + 1) % size;
+    }
+    public void Display()
+    {
+        if (front == -1)
+        {
+            Console.WriteLine("Queue is Empty");
+            return;
+        }
+        Console.Write("Queue: ");
+        int i = front;
+        while (true)
+        {
+            Console.Write(queue[i] + " ");
+            if (i == rear) break;
+            i = (i + 1) % size;
+        }
+        Console.WriteLine();
+    }
+    static void Main()
+    {
+        CircularQueue cq = new CircularQueue(5);
+        cq.Enqueue(10);
+        cq.Enqueue(20);
+        cq.Enqueue(30);
+        cq.Display();
+        cq.Dequeue();
+        cq.Display();
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+10>NOTEPAD CLONE
+using System;
+using System.Windows.Forms;
+class NotepadClone : Form
+{
+    TextBox textBox;
+    public NotepadClone()
+    {
+        textBox = new TextBox
+        {
+            Multiline = true,
+            Dock = DockStyle.Fill,
+            Font = new System.Drawing.Font("Consolas", 12)
+        };
+        MenuStrip menuStrip = new MenuStrip();
+        ToolStripMenuItem fileMenu = new ToolStripMenuItem("File");
+        fileMenu.DropDownItems.Add("Open", null, OpenFile);
+        fileMenu.DropDownItems.Add("Save", null, SaveFile);
+        fileMenu.DropDownItems.Add("Exit", null, (s, e) => Close());
+        menuStrip.Items.Add(fileMenu);
+        Controls.Add(menuStrip);
+        Controls.Add(textBox);
+        MainMenuStrip = menuStrip;
+    }
+    private void OpenFile(object sender, EventArgs e)
+    {
+        OpenFileDialog ofd = new OpenFileDialog();
+        if (ofd.ShowDialog() == DialogResult.OK)
+        {
+            textBox.Text = System.IO.File.ReadAllText(ofd.FileName);
+        }
+    }
+    private void SaveFile(object sender, EventArgs e)
+    {
+        SaveFileDialog sfd = new SaveFileDialog();
+        if (sfd.ShowDialog() == DialogResult.OK)
+        {
+            System.IO.File.WriteAllText(sfd.FileName, textBox.Text);
+        }
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.Run(new NotepadClone());
+    }
+}
