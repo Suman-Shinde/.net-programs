@@ -1,0 +1,231 @@
+31> CALCULATE THE HAMMING DISTANCE BETWEEN TWO STRINGS
+using System;
+class HammingDistance
+{
+    static void Main()
+    {
+        Console.Write("Enter first string: ");
+        string str1 = Console.ReadLine();
+        Console.Write("Enter second string: ");
+        string str2 = Console.ReadLine();
+        if (str1.Length != str2.Length)
+        {
+            Console.WriteLine("Strings must be of equal length.");
+            return;
+        }
+        int distance = 0;
+        for (int i = 0; i < str1.Length; i++)
+        {
+            if (str1[i] != str2[i])
+                distance++;
+        }
+        Console.WriteLine($"Hamming Distance: {distance}");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+32> REVERSE WORDS IN A SENTENCE WITHOUT REVERSING CHARACTERS
+using System;
+class ReverseWords
+{
+    static void Main()
+    {
+        Console.Write("Enter a sentence: ");
+        string sentence = Console.ReadLine();
+        string[] words = sentence.Split(' ');
+        Array.Reverse(words);
+        string result = string.Join(" ", words);
+        Console.WriteLine($"Reversed: {result}");
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+33> MERGE TWO FILES INTO ONE
+using System;
+using System.IO;
+class MergeFiles
+{
+    static void Main()
+    {
+        Console.Write("Enter the first file path: ");
+        string file1 = Console.ReadLine();
+        Console.Write("Enter the second file path: ");
+        string file2 = Console.ReadLine();
+        Console.Write("Enter the output file path: ");
+        string outputFile = Console.ReadLine();
+        using (StreamWriter writer = new StreamWriter(outputFile))
+        {
+            foreach (string line in File.ReadLines(file1))
+                writer.WriteLine(line);
+            foreach (string line in File.ReadLines(file2))
+                writer.WriteLine(line);
+        }
+        Console.WriteLine("Files merged successfully!");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+34> SOLVE A QUADRATIC EQUATIONS
+using System;
+class QuadraticEquation
+{
+    static void Main()
+    {
+        Console.Write("Enter coefficient a: ");
+        double a = double.Parse(Console.ReadLine());
+        Console.Write("Enter coefficient b: ");
+        double b = double.Parse(Console.ReadLine());
+        Console.Write("Enter coefficient c: ");
+        double c = double.Parse(Console.ReadLine());
+        double discriminant = b * b - 4 * a * c;
+        if (discriminant < 0)
+        {
+            Console.WriteLine("No real roots.");
+        }
+        else
+        {
+            double root1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
+            double root2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
+            Console.WriteLine($"Roots: {root1} and {root2}");
+        }
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+35> SYNCHRONIZE THREADS USING MUTEX
+using System;
+using System.Threading;
+class MutexExample
+{
+    static Mutex mutex = new Mutex();
+    static void PrintNumbers(string threadName)
+    {
+        mutex.WaitOne();
+        Console.WriteLine($"{threadName} is starting.");
+        for (int i = 1; i <= 5; i++)
+        {
+            Console.WriteLine($"{threadName}: {i}");
+            Thread.Sleep(500);
+        }
+        Console.WriteLine($"{threadName} is ending.");
+        mutex.ReleaseMutex();
+    }
+    static void Main()
+    {
+        Thread t1 = new Thread(() => PrintNumbers("Thread 1"));
+        Thread t2 = new Thread(() => PrintNumbers("Thread 2"));
+        t1.Start();
+        t2.Start();
+        t1.Join();
+        t2.Join();
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------
+36> CREATE A SIMPLE LOGIN FORM
+using System;
+using System.Windows.Forms;
+class LoginForm : Form
+{
+    public LoginForm()
+    {
+        Text = "Login Form";
+        var usernameLabel = new Label { Text = "Username:", Top = 20, Left = 20 };
+        var usernameTextBox = new TextBox { Top = 20, Left = 100, Width = 200 };
+        var passwordLabel = new Label { Text = "Password:", Top = 60, Left = 20 };
+        var passwordTextBox = new TextBox { Top = 60, Left = 100, Width = 200, PasswordChar = '*' };
+        var messageLabel = new Label { Top = 140, Left = 20, Width = 300 };
+        var loginButton = new Button { Text = "Login", Top = 100, Left = 100 };
+        loginButton.Click += (s, e) =>
+        {
+            messageLabel.Text = usernameTextBox.Text == "admin" && passwordTextBox.Text == "password" 
+                ? "Login successful!" 
+                : "Invalid credentials.";
+        };
+        Controls.AddRange(new Control[] { usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, messageLabel });
+    }
+    [STAThread]
+    static void Main() => Application.Run(new LoginForm());
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+37> COUNT TRAILING ZEROES IN FACTORIAL OF A NUMBER
+using System;
+class TrailingZeroes
+{
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int n = int.Parse(Console.ReadLine());
+        int count = 0;
+        for (int i = 5; n / i >= 1; i *= 5)
+        {
+            count += n / i;
+        }
+        Console.WriteLine($"Trailing zeroes in {n}!: {count}");
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+38> CONVERT A STRING TO TITLE CASE
+using System;
+using System.Globalization;
+class TitleCase
+{
+    static void Main()
+    {
+        Console.Write("Enter a sentence: ");
+        string input = Console.ReadLine();
+        TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+        string titleCase = textInfo.ToTitleCase(input.ToLower());
+        Console.WriteLine($"Title Case: {titleCase}");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+39> ENCRYPT AND DECRYPT A FILE
+using System;
+using System.IO;
+using System.Security.Cryptography;
+class FileEncryptor
+{
+    static void Main()
+    {
+        Console.Write("Enter file path to encrypt: ");
+        string filePath = Console.ReadLine();
+        Console.Write("Enter encryption password: ");
+        string password = Console.ReadLine();
+        EncryptFile(filePath, filePath + ".enc", password);
+        Console.WriteLine($"File encrypted to {filePath}.enc");
+    }
+    static void EncryptFile(string inputFile, string outputFile, string password)
+    {
+        byte[] key = new Rfc2898DeriveBytes(password, new byte[8]).GetBytes(32);
+        using var aes = Aes.Create();
+        using var fsCrypt = new FileStream(outputFile, FileMode.Create);
+        aes.Key = key;
+        aes.GenerateIV();
+        fsCrypt.Write(aes.IV, 0, aes.IV.Length);
+        using var cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write);
+        using var fsIn = new FileStream(inputFile, FileMode.Open);
+        fsIn.CopyTo(cs);
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+40> BUILD A TASK MANAGEMENT SYSTEM
+using System;
+using System.Windows.Forms;
+class TaskManager : Form
+{
+    public TaskManager()
+    {
+        Text = "Task Manager";
+        Width = 400; Height = 300;
+        var taskInput = new TextBox { Top = 10, Left = 10, Width = 250 };
+        var taskListBox = new ListBox { Top = 50, Left = 10, Width = 350, Height = 200 };
+        var addTaskButton = new Button { Text = "Add Task", Top = 10, Left = 270 };
+        addTaskButton.Click += (s, e) =>
+        {
+            if (!string.IsNullOrWhiteSpace(taskInput.Text))
+            {
+                taskListBox.Items.Add(taskInput.Text);
+                taskInput.Clear();
+            }
+        };
+        Controls.AddRange(new Control[] { taskInput, taskListBox, addTaskButton });
+    }
+    [STAThread]
+    static void Main() => Application.Run(new TaskManager());
+}
