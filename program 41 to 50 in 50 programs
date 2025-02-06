@@ -1,0 +1,236 @@
+41> CREATE A REST API USING ASP.NET
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+var app = builder.Build();
+app.MapControllers();
+app.Run();
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    private static List<string> products = new() { "Laptop", "Phone", "Tablet" };
+    [HttpGet]
+    public IEnumerable<string> Get() => products;
+    [HttpPost]
+    public IActionResult Add([FromBody] string product)
+    {
+        products.Add(product);
+        return Ok();
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------
+42> MONITOR NETWORK TRAFFIC USING PACKET CAPTURE
+using System;
+using PacketDotNet;
+using SharpPcap;
+class NetworkMonitor
+{
+    static void Main()
+    {
+        var devices = CaptureDeviceList.Instance;
+        for (int i = 0; i < devices.Count; i++) Console.WriteLine($"{i}: {devices[i]}");
+        Console.Write("Select a device: ");
+        var device = devices[int.Parse(Console.ReadLine())];
+        device.OnPacketArrival += (s, e) => 
+            Console.WriteLine(Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data));
+        device.Open();
+        device.StartCapture();
+        Console.WriteLine("Press Enter to stop...");
+        Console.ReadLine();
+        device.StopCapture();
+        device.Close();
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+43> CALCULATE THE GCD OF TWO NUMBERS
+using System;
+class GCD
+{
+    static int FindGCD(int a, int b)
+    {
+        while (b != 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+    static void Main()
+    {
+        Console.Write("Enter the first number: ");
+        int num1 = int.Parse(Console.ReadLine());
+        Console.Write("Enter the second number: ");
+        int num2 = int.Parse(Console.ReadLine());
+        Console.WriteLine($"GCD of {num1} and {num2} is {FindGCD(num1, num2)}");
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+44> CHECK IF A STRING CONTAINS BALANCED PARENTHESES
+using System;
+using System.Collections.Generic;
+class BalancedParentheses
+{
+    static bool IsBalanced(string str)
+    {
+        var stack = new Stack<char>();
+        foreach (char ch in str)
+        {
+            if ("({[".Contains(ch)) stack.Push(ch);
+            else if (")}]".Contains(ch) && (stack.Count == 0 || "({[".IndexOf(stack.Pop()) != ")}]".IndexOf(ch)))
+                return false;
+        }
+        return stack.Count == 0;
+    }
+    static void Main()
+    {
+        Console.Write("Enter a string with parentheses: ");
+        Console.WriteLine(IsBalanced(Console.ReadLine()) ? "Balanced" : "Not Balanced");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+45> GENERATE A FILE HASH
+using System;
+using System.IO;
+using System.Security.Cryptography;
+class FileHashGenerator
+{
+    static void Main()
+    {
+        Console.Write("Enter the file path: ");
+        string filePath = Console.ReadLine();
+        using (var sha256 = SHA256.Create())
+        using (var stream = File.OpenRead(filePath))
+        {
+            byte[] hash = sha256.ComputeHash(stream);
+            Console.WriteLine($"SHA256 Hash: {BitConverter.ToString(hash).Replace("-", "")}");
+        }
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+46> IMPLEMENT A SIMPLE DRAWING APPLICATION
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+class DrawingApp : Form
+{
+    private bool isDrawing;
+    private Point lastPoint;
+    public DrawingApp()
+    {
+        Text = "Drawing App";
+        MouseDown += (s, e) => { isDrawing = true; lastPoint = e.Location; };
+        MouseMove += (s, e) =>
+        {
+            if (isDrawing && e.Button == MouseButtons.Left)
+            {
+                using var g = CreateGraphics();
+                g.DrawLine(Pens.Black, lastPoint, e.Location);
+                lastPoint = e.Location;
+            }
+        };
+        MouseUp += (s, e) => isDrawing = false;
+    }
+    [STAThread]
+    static void Main() => Application.Run(new DrawingApp());
+}
+------------------------------------------------------------------------------------------------------------------------------
+47> FETCH WEATHER DATA USING A PUBLIC API
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+class WeatherApp
+{
+    static async Task Main()
+    {
+        Console.Write("Enter city name: ");
+        string city = Console.ReadLine();
+        string apiKey = "your_api_key"; // Replace with a valid API key
+        string url = $"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
+        using var client = new HttpClient();
+        var response = await client.GetAsync(url);
+        Console.WriteLine(response.IsSuccessStatusCode 
+            ? $"Weather Data:\n{await response.Content.ReadAsStringAsync()}" 
+            : "Failed to fetch weather data.");
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+48> BUILD A PRIORITY QUEUE USING A HEAP
+using System;
+using System.Collections.Generic;
+class PriorityQueue<T> where T : IComparable<T>
+{
+    private List<T> heap = new();
+    public void Enqueue(T item)
+    {
+        for (heap.Add(item), int i = heap.Count - 1; i > 0 && heap[i].CompareTo(heap[(i - 1) / 2]) < 0; i = (i - 1) / 2)
+            (heap[i], heap[(i - 1) / 2]) = (heap[(i - 1) / 2], heap[i]);
+    }
+    public T Dequeue()
+    {
+        if (heap.Count == 0) throw new InvalidOperationException("Queue is empty.");
+        T root = heap[0]; heap[0] = heap[^1]; heap.RemoveAt(heap.Count - 1);
+        for (int i = 0, left, right, smallest; (left = 2 * i + 1) < heap.Count; i = smallest)
+        {
+            right = left + 1;
+            smallest = (right < heap.Count && heap[right].CompareTo(heap[left]) < 0) ? right : left;
+            if (heap[i].CompareTo(heap[smallest]) <= 0) break;
+            (heap[i], heap[smallest]) = (heap[smallest], heap[i]);
+        }
+        return root;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var pq = new PriorityQueue<int>();
+        pq.Enqueue(5); pq.Enqueue(2); pq.Enqueue(8);
+        Console.WriteLine(pq.Dequeue());
+        Console.WriteLine(pq.Dequeue());
+        Console.WriteLine(pq.Dequeue());
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+49> GENERATE PASCAL'S TRIANGLE
+using System;
+class PascalsTriangle
+{
+    static void Main()
+    {
+        Console.Write("Enter the number of rows: ");
+        int rows = int.Parse(Console.ReadLine());
+        int[][] triangle = new int[rows][];
+        for (int i = 0; i < rows; i++)
+        {
+            triangle[i] = new int[i + 1];
+            triangle[i][0] = triangle[i][i] = 1;
+
+            for (int j = 1; j < i; j++)
+            {
+                triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+            }
+        }
+        foreach (var row in triangle)
+        {
+            Console.WriteLine(string.Join(" ", row));
+        }
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+50> CHECK IF A STRING IS A VALID ANAGRAM
+using System;
+using System.Linq;
+class AnagramChecker
+{
+    static void Main()
+    {
+        Console.Write("Enter the first string: ");
+        string str1 = Console.ReadLine();
+        Console.Write("Enter the second string: ");
+        string str2 = Console.ReadLine();
+        bool isAnagram = str1.OrderBy(c => c).SequenceEqual(str2.OrderBy(c => c));
+        Console.WriteLine(isAnagram ? "The strings are anagrams." : "The strings are not anagrams.");
+    }
+}
