@@ -1,0 +1,266 @@
+21> CUSTOM EXCEPTION HANDLING
+using System;
+class NegativeNumberException : Exception
+{
+    public NegativeNumberException(string message) : base(message) { }
+}
+class CustomExceptionExample
+{
+    static void Main()
+    {
+        try
+        {
+            Console.Write("Enter a positive number: ");
+            int num = int.Parse(Console.ReadLine());
+            if (num < 0)
+                throw new NegativeNumberException("Negative numbers are not allowed.");
+            Console.WriteLine($"You entered: {num}");
+        }
+        catch (NegativeNumberException ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------
+22> CREATE A SPLASH SCREEN
+using System;
+using System.Windows.Forms;
+class SplashScreen : Form
+{
+    Timer timer;
+    public SplashScreen()
+    {
+        Text = "Splash Screen";
+        Size = new System.Drawing.Size(400, 200);
+        Label label = new Label
+        {
+            Text = "Welcome to My Application!",
+            Dock = DockStyle.Fill,
+            Font = new System.Drawing.Font("Arial", 20),
+            TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        };
+        timer = new Timer { Interval = 3000 }; // Close after 3 seconds
+        timer.Tick += (s, e) => { timer.Stop(); Close(); };
+
+        Controls.Add(label);
+        timer.Start();
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.Run(new SplashScreen());
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+23> CONVERT DECIMAL TO BINARY
+using System;
+class DecimalToBinary
+{
+    static void Main()
+    {
+        Console.Write("Enter a decimal number: ");
+        int number = int.Parse(Console.ReadLine());
+        string binary = Convert.ToString(number, 2);
+        Console.WriteLine($"Binary representation: {binary}");
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+24> FIND ALL PALINDROMIC SUBSTRINGS IN A STRING
+using System;
+class PalindromicSubstrings
+{
+    static void Main()
+    {
+        Console.WriteLine("Enter a string:");
+        string input = Console.ReadLine();
+        Console.WriteLine("Palindromic substrings:");
+        for (int i = 0; i < input.Length; i++)
+        {
+            for (int j = i + 1; j <= input.Length; j++)
+            {
+                string substring = input.Substring(i, j - i);
+                if (IsPalindrome(substring))
+                    Console.WriteLine(substring);
+            }
+        }
+    }
+
+    static bool IsPalindrome(string s)
+    {
+        return s == new string(s.Reverse().ToArray());
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+25> CREATE A TO-DO LIST APP
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+class ToDoListApp : Form
+{
+    List<string> tasks = new List<string>();
+    ListBox taskListBox;
+    TextBox taskInput;
+    public ToDoListApp()
+    {
+        taskListBox = new ListBox { Dock = DockStyle.Top, Height = 200 };
+        taskInput = new TextBox { Dock = DockStyle.Top, PlaceholderText = "Enter a new task" };
+        Button addButton = new Button { Text = "Add Task", Dock = DockStyle.Top };
+        addButton.Click += AddTask;
+        Button removeButton = new Button { Text = "Remove Selected Task", Dock = DockStyle.Top };
+        removeButton.Click += RemoveTask;
+        Controls.Add(removeButton);
+        Controls.Add(addButton);
+        Controls.Add(taskInput);
+        Controls.Add(taskListBox);
+    }
+    private void AddTask(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(taskInput.Text))
+        {
+            tasks.Add(taskInput.Text);
+            taskListBox.Items.Add(taskInput.Text);
+            taskInput.Clear();
+        }
+    }
+    private void RemoveTask(object sender, EventArgs e)
+    {
+        if (taskListBox.SelectedItem != null)
+        {
+            string selectedTask = taskListBox.SelectedItem.ToString();
+            tasks.Remove(selectedTask);
+            taskListBox.Items.Remove(selectedTask);
+        }
+    }
+    [STAThread]
+    static void Main()
+    {
+        Application.Run(new ToDoListApp());
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+26> FETCH DATA USING DAPPER ORM
+using System;
+using System.Data.SqlClient;
+using Dapper;
+using System.Linq;
+class DapperExample
+{
+    static void Main()
+    {
+        string connectionString = "your_connection_string_here";
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+            var query = "SELECT Id, Name, Email FROM Users";
+            var users = connection.Query<User>(query).ToList();
+            foreach (var user in users)
+            {
+                Console.WriteLine($"ID: {user.Id}, Name: {user.Name}, Email: {user.Email}");
+            }
+        }
+    }
+}
+class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+------------------------------------------------------------------------------------------------------------------------------
+27> FIND ARMSTRONG NUMBERS IN A RANGE
+using System;
+class ArmstrongNumbers
+{
+    static void Main()
+    {
+        Console.Write("Enter the range (start and end): ");
+        int start = int.Parse(Console.ReadLine());
+        int end = int.Parse(Console.ReadLine());
+        Console.WriteLine("Armstrong numbers in the range:");
+        for (int num = start; num <= end; num++)
+        {
+            int sum = 0, temp = num, digits = num.ToString().Length;
+            while (temp > 0)
+            {
+                int digit = temp % 10;
+                sum += (int)Math.Pow(digit, digits);
+                temp /= 10;
+            }
+            if (sum == num)
+                Console.WriteLine(num);
+        }
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+28> CHECK IF TWO STRINGS ARE ANAGRAMS
+using System;
+using System.Linq;
+class AnagramCheck
+{
+    static void Main()
+    {
+        Console.Write("Enter the first string: ");
+        string str1 = Console.ReadLine();
+        Console.Write("Enter the second string: ");
+        string str2 = Console.ReadLine();
+        bool areAnagrams = str1.OrderBy(c => c).SequenceEqual(str2.OrderBy(c => c));
+        Console.WriteLine(areAnagrams ? "The strings are anagrams." : "The strings are not anagrams.");
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+29> CRUD OPERATIONS USING ENTITY FRAMEWORK CORE
+using System;
+using Microsoft.EntityFrameworkCore;
+class ProductContext : DbContext
+{
+    public DbSet<Product> Products { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Your_Connection_String_Here");
+    }
+}
+class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+}
+class Program
+{
+    static void Main()
+    {
+        using (var db = new ProductContext())
+        {
+            db.Products.Add(new Product { Name = "Laptop", Price = 1500.00M });
+            db.SaveChanges();
+            foreach (var product in db.Products)
+                Console.WriteLine($"Id: {product.Id}, Name: {product.Name}, Price: {product.Price}");
+            var firstProduct = db.Products.First();
+            firstProduct.Price = 1400.00M;
+            db.SaveChanges();
+            db.Products.Remove(firstProduct);
+            db.SaveChanges();
+        }
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------
+30> FETCH AND PARSE DATA FROM A REST API
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+class RestApiClient
+{
+    static async Task Main()
+    {
+        string url = "https://jsonplaceholder.typicode.com/posts";
+        using (HttpClient client = new HttpClient())
+        {
+            string response = await client.GetStringAsync(url);
+            Console.WriteLine(response);
+        }
+    }
+}
